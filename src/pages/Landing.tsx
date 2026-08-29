@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import React, { useRef } from "react";
 import {
   motion,
   useInView,
@@ -119,6 +119,28 @@ const PROCESS_STEPS = [
     text: "The gap between good and great is in the details. I refine spacing, type, motion, and colour until everything feels intentional and complete.",
   },
 ];
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ERROR BOUNDARY — catches runtime errors (e.g. Three.js / WebGL) so a
+   single component crash never blanks the entire page.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+class ComponentErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback?: React.ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(err: Error) {
+    console.warn("[ComponentErrorBoundary]", err.message);
+  }
+  render() {
+    if (this.state.hasError) return this.props.fallback ?? null;
+    return this.props.children;
+  }
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    REVEAL ANIMATION
@@ -269,7 +291,9 @@ function OpeningSection() {
         style={{ opacity: archivistOpacity }}
         className="pointer-events-none absolute bottom-0 right-0 z-10 h-[280px] w-[280px] md:h-[360px] md:w-[360px]"
       >
-        <ArchivistScene className="h-full w-full" />
+        <ComponentErrorBoundary fallback={null}>
+          <ArchivistScene className="h-full w-full" />
+        </ComponentErrorBoundary>
       </motion.div>
 
       {/* Scroll line */}
@@ -665,7 +689,7 @@ function AboutSection() {
               >
                 <div className="relative aspect-[3/4] w-full overflow-hidden bg-surface">
                   <img
-                    src="/portrait.jpg"
+                    src="/portrait.png"
                     alt="Aditya — Graphic Designer and AI Website Creator"
                     className="h-full w-full object-cover object-center"
                     loading="lazy"
