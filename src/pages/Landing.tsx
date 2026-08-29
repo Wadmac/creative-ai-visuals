@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   motion,
   useInView,
@@ -621,6 +621,90 @@ function ServicesSection() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   PORTRAIT — loads from /portrait.jpg, falls back to a designed SVG
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+function PortraitImage() {
+  const [src, setSrc] = useState<string | null>(null);
+  const [tried, setTried] = useState(false);
+
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => setSrc("/portrait.jpg");
+    img.onerror = () => setTried(true);
+    img.src = "/portrait.jpg";
+  }, []);
+
+  if (src) {
+    return (
+      <img
+        src={src}
+        alt="Aditya — Graphic Designer and AI Website Creator"
+        className="h-full w-full object-cover object-center"
+        loading="lazy"
+      />
+    );
+  }
+
+  if (tried) {
+    return (
+      <div className="flex h-full w-full items-center justify-center bg-surface">
+        <svg
+          viewBox="0 0 400 560"
+          className="h-full w-full"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          {/* Dark abstract composition */}
+          <rect width="400" height="560" fill="#0a0f1a" />
+          <line x1="200" y1="0" x2="200" y2="560" stroke="#3a7cc6" strokeWidth="0.5" opacity="0.15" />
+          <line x1="0" y1="280" x2="400" y2="280" stroke="#3a7cc6" strokeWidth="0.5" opacity="0.15" />
+          <circle cx="200" cy="240" r="120" fill="none" stroke="#3a7cc6" strokeWidth="0.5" opacity="0.2" />
+          <circle cx="200" cy="240" r="80" fill="none" stroke="#ffffff" strokeWidth="0.3" opacity="0.1" />
+          <text
+            x="200"
+            y="260"
+            textAnchor="middle"
+            fontFamily="system-ui, sans-serif"
+            fontSize="96"
+            fontWeight="bold"
+            fill="#ffffff"
+            opacity="0.08"
+          >
+            A
+          </text>
+          <text
+            x="200"
+            y="480"
+            textAnchor="middle"
+            fontFamily="monospace"
+            fontSize="9"
+            letterSpacing="0.3em"
+            fill="#3a7cc6"
+            opacity="0.4"
+          >
+            PLACE YOUR PORTRAIT AT
+          </text>
+          <text
+            x="200"
+            y="500"
+            textAnchor="middle"
+            fontFamily="monospace"
+            fontSize="9"
+            letterSpacing="0.15em"
+            fill="#ffffff"
+            opacity="0.3"
+          >
+            PUBLIC / PORTRAIT.JPG
+          </text>
+        </svg>
+      </div>
+    );
+  }
+
+  return <div className="h-full w-full animate-pulse bg-surface" />;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
    ABOUT — manifesto
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -688,12 +772,7 @@ function AboutSection() {
                 className="relative z-20"
               >
                 <div className="relative aspect-[3/4] w-full overflow-hidden bg-surface">
-                  <img
-                    src="/portrait.png"
-                    alt="Aditya — Graphic Designer and AI Website Creator"
-                    className="h-full w-full object-cover object-center"
-                    loading="lazy"
-                  />
+                  <PortraitImage />
                   {/* Subtle vignette overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
                   <div className="absolute inset-0 bg-gradient-to-r from-background/30 via-transparent to-transparent" />
