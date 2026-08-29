@@ -1,114 +1,126 @@
 import { useRef } from "react";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { Navigation } from "@/components/Navigation";
-import { ThreeHero } from "@/components/ThreeHero";
 import {
-  ArrowUpRight,
-  Sparkles,
-  Palette,
-  Globe,
-  Code2,
-  Zap,
-  Mail,
-  MapPin,
-  ExternalLink,
-} from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
+  motion,
+  useInView,
+  useScroll,
+  useTransform,
+  type Variants,
+} from "framer-motion";
+import { Navigation } from "@/components/Navigation";
+import { ArchivistScene } from "@/components/ThreeHero";
+import { ExternalLink, ArrowRight, Mail } from "lucide-react";
 
-// ─── Data ────────────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════════════════
+   DATA — preserved from original, reformatted
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 const PROJECTS = [
   {
-    id: 1,
-    title: "Neural Brand Identity",
-    category: "Brand Design",
+    num: "01",
+    title: "Star Central Asia",
+    url: "https://star-central-asia-gsq2.vercel.app/",
+    category: "Website Design",
     description:
-      "Complete brand system for an AI research lab — logo suite, typography, colour palette, and a 60-page guidelines document.",
-    tags: ["Identity", "Print", "AI"],
-    color: "from-blue-600/20 to-cyan-500/10",
+      "A polished, editorial website for a Central Asian creative agency — bold typography, responsive layout, and refined visual hierarchy.",
   },
   {
-    id: 2,
-    title: "Aether Dashboard",
-    category: "UI/UX Design",
+    num: "02",
+    title: "Delhi Delight Cafe",
+    url: "https://delhi-delight-digital.vercel.app/",
+    category: "Restaurant Website",
     description:
-      "A real-time analytics dashboard for a SaaS platform, designed for clarity at scale and built with a dark-mode-first philosophy.",
-    tags: ["Dashboard", "SaaS", "Dark UI"],
-    color: "from-indigo-600/20 to-purple-500/10",
+      "A warm, inviting digital presence for a Delhi-based cafe — rich food imagery, smooth navigation, and brand storytelling.",
   },
   {
-    id: 3,
-    title: "Voxel Music Festival",
-    category: "Event Campaign",
+    num: "03",
+    title: "Royal Siyaram Estates",
+    url: "https://royal-siyaram-estates-k1dy.vercel.app/",
+    category: "Real Estate Platform",
     description:
-      "Poster series, animated social assets, and on-site signage for a three-day electronic music festival in Bangalore.",
-    tags: ["Print", "Motion", "Events"],
-    color: "from-rose-600/20 to-orange-500/10",
+      "A premium property showcase website with clean architectural layouts, property listings, and a trustworthy design language.",
   },
   {
-    id: 4,
-    title: "Prism AI Website",
-    category: "Web Design",
+    num: "04",
+    title: "Motion & Video Work",
+    url: "https://www.instagram.com/aditya_motion_graphics/reels/",
+    category: "Motion Design",
     description:
-      "AI-powered website for a generative art platform — complete with interactive 3D elements, responsive layout, and CMS integration.",
-    tags: ["Web", "3D", "AI"],
-    color: "from-emerald-600/20 to-teal-500/10",
-  },
-  {
-    id: 5,
-    title: "Carbon Ledger App",
-    category: "Product Design",
-    description:
-      "Mobile app concept for tracking personal carbon emissions with gamified challenges and community leaderboards.",
-    tags: ["Mobile", "Product", "Sustainability"],
-    color: "from-amber-600/20 to-yellow-500/10",
-  },
-  {
-    id: 6,
-    title: "Vertex Type Foundry",
-    category: "Typography",
-    description:
-      "Custom variable typeface with optical sizing, designed for editorial use across print and digital mediums.",
-    tags: ["Typography", "Print", "Digital"],
-    color: "from-violet-600/20 to-fuchsia-500/10",
+      "A collection of motion graphics, video edits, and visual experiments — showcasing rhythm, timing, and visual storytelling.",
   },
 ];
 
 const SERVICES = [
   {
-    icon: Palette,
+    num: "01",
+    title: "AI Website Design & Improvement",
+    description:
+      "Websites designed with AI as a creative partner, then refined by hand. Fast production, high finish, built to perform.",
+  },
+  {
+    num: "02",
     title: "Graphic Design",
     description:
-      "Visual identities, brand systems, editorial layouts, and marketing collateral that communicate with clarity and style.",
+      "Visual identities, editorial layouts, posters, social assets — crafted with clarity and strong compositional instinct.",
   },
   {
-    icon: Globe,
-    title: "AI-Powered Web Design",
+    num: "03",
+    title: "Social Media Visuals",
     description:
-      "Websites and web apps designed with AI as a creative partner — fast to produce, refined by hand, and built to perform.",
+      "Scroll-stopping posts, stories, and campaign assets designed to communicate and resonate across platforms.",
   },
   {
-    icon: Code2,
-    title: "Vibe Coding",
+    num: "04",
+    title: "Video Editing & Visual Improvement",
     description:
-      "Rapid prototyping and interactive experiences built with modern frameworks, blending code craft with creative instinct.",
+      "Post-production, colour grading, pacing, and visual polish for video content that needs a professional edge.",
   },
   {
-    icon: Zap,
-    title: "Creative Direction",
+    num: "05",
+    title: "Brand Promotion Videos",
     description:
-      "End-to-end creative strategy for campaigns, products, and brand launches — from concept to final delivery.",
+      "Short-form and long-form promotional videos that tell a brand's story with motion, sound, and visual craft.",
   },
 ];
 
-const STATS = [
-  { value: "50+", label: "Projects Delivered" },
-  { value: "3+", label: "Years of Experience" },
-  { value: "100%", label: "Client Satisfaction" },
-  { value: "∞", label: "Creative Ambition" },
+const TOOLS = [
+  "Photoshop",
+  "Illustrator",
+  "CorelDraw",
+  "Canva",
+  "Video Editing",
+  "Filmora",
+  "CapCut",
+  "AI Website Design",
+  "Vibe Coding",
+  "AI Creative Workflows",
 ];
 
-// ─── Reusable Animation Wrapper ──────────────────────────────────────────────
+const PROCESS_STEPS = [
+  {
+    num: "01",
+    title: "Understand",
+    text: "Every project starts with listening. What is the goal, who is the audience, what does the brand need to say? I map the context before touching a pixel.",
+  },
+  {
+    num: "02",
+    title: "Imagine",
+    text: "This is where creative instinct meets research. Moodboards, references, rough sketches — I explore directions that feel right before committing.",
+  },
+  {
+    num: "03",
+    title: "Create",
+    text: "The real work begins. Design, build, iterate. I move between AI tools and traditional craft to find the fastest path to something genuinely good.",
+  },
+  {
+    num: "04",
+    title: "Refine",
+    text: "The gap between good and great is in the details. I refine spacing, type, motion, and colour until everything feels intentional and complete.",
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   REVEAL ANIMATION
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 function Reveal({
   children,
@@ -120,14 +132,14 @@ function Reveal({
   delay?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const isInView = useInView(ref, { once: true, margin: "-60px" });
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay }}
       className={className}
     >
       {children}
@@ -135,461 +147,745 @@ function Reveal({
   );
 }
 
-// ─── Hero Section ────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════════════════
+   OPENING — THE ARCHIVE
+   ═══════════════════════════════════════════════════════════════════════════ */
 
-function HeroSection() {
-  const { isAuthenticated } = useAuth();
+function OpeningSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
 
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const y = useTransform(scrollYProgress, [0, 0.5], [0, 80]);
+  const nameOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
+  const nameY = useTransform(scrollYProgress, [0, 0.4], [0, -60]);
+  const archivistOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
+
+  const letterVariants: Variants = {
+    hidden: { opacity: 0, y: 80, rotateX: -40 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      rotateX: 0,
+      transition: {
+        duration: 1,
+        ease: [0.22, 1, 0.36, 1],
+        delay: 0.3 + i * 0.06,
+      },
+    }),
+  };
+
+  const name = "ADITYA";
 
   return (
     <section
       id="home"
       ref={sectionRef}
-      className="relative flex min-h-screen items-center overflow-hidden"
+      className="relative flex min-h-[100svh] flex-col justify-between overflow-hidden"
     >
-      {/* Gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-background/0" />
-
-      {/* Subtle grid overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
-        }}
-      />
-
-      {/* 3D Canvas */}
-      <ThreeHero />
-
-      {/* Content overlay */}
-      <motion.div
-        style={{ opacity, y }}
-        className="relative z-10 mx-auto w-full max-w-7xl px-6 pt-32 lg:px-12"
-      >
-        <div className="max-w-3xl">
-          {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mb-8 inline-flex items-center gap-2 rounded-full border border-border/50 bg-surface/60 px-4 py-2 backdrop-blur-sm"
-          >
-            <Sparkles className="size-3.5 text-accent" />
-            <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-muted-foreground">
-              Graphic Designer · AI Website Designer · Vibe Coding Explorer
-            </span>
-          </motion.div>
-
-          {/* Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="text-5xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl"
-          >
-            VISUALS THAT
-            <br />
-            <span className="text-gradient-glow">WORK.</span>
-            <br />
-            IDEAS THAT{" "}
-            <span className="text-gradient-glow">MOVE.</span>
-          </motion.h1>
-
-          {/* Sub-headline */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.8 }}
-            className="mt-8 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg"
-          >
-            I'm Aditya — a Graphic Designer and Vibe Coding Explorer creating
-            professional visuals, AI-powered websites, and creative digital
-            experiences that make an impression.
-          </motion.p>
-
-          {/* CTAs */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 1 }}
-            className="mt-10 flex flex-wrap gap-4"
-          >
-            <a href="#work" className="btn-primary">
-              View My Work
-              <ArrowUpRight className="size-4" />
-            </a>
-            <a
-              href={isAuthenticated ? "/dashboard" : "/auth?returnTo=/dashboard"}
-              className="btn-outline"
-            >
-              Let's Work Together
-            </a>
-          </motion.div>
-        </div>
-
-        {/* Bot label */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.5 }}
-          className="pointer-events-none absolute bottom-24 right-12 hidden text-right lg:block"
-        >
-          <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/60">
-            Meet your creative guide
-          </p>
-          <div className="mt-2 h-px w-24 bg-gradient-to-r from-transparent to-accent/40 ml-auto" />
-        </motion.div>
-      </motion.div>
-
-      {/* Scroll indicator */}
+      {/* Top label */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 1 }}
-        className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2"
+        transition={{ duration: 1, delay: 0.1 }}
+        className="relative z-10 flex items-center justify-between px-6 pt-28 pb-4 lg:px-12"
       >
+        <span className="text-[10px] tracking-[0.35em] uppercase text-muted-foreground">
+          Archive_01 / Aditya / Creative Visuals
+        </span>
+      </motion.div>
+
+      {/* Center: massive name */}
+      <motion.div
+        style={{ opacity: nameOpacity, y: nameY }}
+        className="relative z-10 flex flex-1 flex-col items-center justify-center px-6"
+      >
+        {/* The name — oversized, editorial */}
+        <div className="overflow-hidden">
+          <div className="flex justify-center" style={{ perspective: "600px" }}>
+            {name.split("").map((letter, i) => (
+              <motion.span
+                key={i}
+                custom={i}
+                initial="hidden"
+                animate="visible"
+                variants={letterVariants}
+                className="text-[clamp(4rem,18vw,14rem)] font-bold leading-none tracking-[-0.04em] text-foreground"
+                style={{ transformOrigin: "bottom center" }}
+              >
+                {letter}
+              </motion.span>
+            ))}
+          </div>
+        </div>
+
+        {/* Titles */}
         <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="flex flex-col items-center gap-2"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1.2 }}
+          className="mt-10 flex flex-col items-center gap-1"
         >
-          <span className="text-[9px] tracking-[0.3em] uppercase text-muted-foreground/40">
-            Scroll
+          <span className="text-[11px] tracking-[0.3em] uppercase text-muted-foreground">
+            Graphic Designer
           </span>
-          <div className="h-8 w-px bg-gradient-to-b from-muted-foreground/30 to-transparent" />
+          <span className="text-[11px] tracking-[0.3em] uppercase text-muted-foreground">
+            AI Website Creator
+          </span>
+          <span className="text-[11px] tracking-[0.3em] uppercase text-muted-foreground">
+            Visual Storyteller
+          </span>
         </motion.div>
+
+        {/* Statement */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 1.6 }}
+          className="mt-8 max-w-md text-center text-sm leading-relaxed text-muted-foreground"
+        >
+          I create visuals for professional workplaces and explore how AI can
+          expand creativity.
+        </motion.p>
+
+        {/* Enter CTA */}
+        <motion.a
+          href="#work"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 2 }}
+          className="group mt-12 flex items-center gap-3 text-[12px] font-medium tracking-[0.25em] uppercase text-foreground transition-colors hover:text-accent"
+        >
+          Enter the Work
+          <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
+        </motion.a>
+      </motion.div>
+
+      {/* Archivist — subtle, bottom-right */}
+      <motion.div
+        style={{ opacity: archivistOpacity }}
+        className="pointer-events-none absolute bottom-0 right-0 z-10 h-[280px] w-[280px] md:h-[360px] md:w-[360px]"
+      >
+        <ArchivistScene className="h-full w-full" />
+      </motion.div>
+
+      {/* Scroll line */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2.5, duration: 1 }}
+        className="absolute bottom-8 left-6 z-10 flex items-center gap-3 lg:left-12"
+      >
+        <div className="h-px w-12 bg-border" />
+        <span className="text-[9px] tracking-[0.3em] uppercase text-muted-foreground/50">
+          Scroll
+        </span>
       </motion.div>
     </section>
   );
 }
 
-// ─── Work / Portfolio Section ────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════════════════
+   SELECTED WORK — each project unique
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+function Project01({ project }: { project: (typeof PROJECTS)[0] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <div ref={ref} className="relative">
+      {/* Full-width cinematic preview */}
+      <motion.div
+        initial={{ opacity: 0, scale: 1.04 }}
+        animate={isInView ? { opacity: 1, scale: 1 } : {}}
+        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+        className="relative aspect-[16/7] w-full overflow-hidden bg-surface"
+      >
+        <iframe
+          src={project.url}
+          title={project.title}
+          className="absolute inset-0 h-full w-full border-0"
+          loading="lazy"
+          sandbox="allow-scripts allow-same-origin"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
+      </motion.div>
+
+      {/* Info overlay */}
+      <Reveal>
+        <div className="mt-6 flex items-start justify-between">
+          <div>
+            <span className="text-[10px] tracking-[0.3em] uppercase text-accent">
+              {project.num} / {project.category}
+            </span>
+            <h3 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              {project.title}
+            </h3>
+            <p className="mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground">
+              {project.description}
+            </p>
+          </div>
+          <a
+            href={project.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group mt-1 flex shrink-0 items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Visit
+            <ExternalLink className="size-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </a>
+        </div>
+      </Reveal>
+    </div>
+  );
+}
+
+function Project02({ project }: { project: (typeof PROJECTS)[1] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <div ref={ref} className="relative grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:items-center">
+      {/* Editorial text side */}
+      <Reveal>
+        <div className="order-2 lg:order-1">
+          <span className="text-[10px] tracking-[0.3em] uppercase text-accent">
+            {project.num} / {project.category}
+          </span>
+          <h3 className="mt-3 text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+            {project.title}
+          </h3>
+          <p className="mt-6 max-w-md text-sm leading-relaxed text-muted-foreground">
+            {project.description}
+          </p>
+          <a
+            href={project.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group mt-8 inline-flex items-center gap-2 text-[10px] tracking-[0.25em] uppercase text-foreground transition-colors hover:text-accent"
+          >
+            View Project
+            <ArrowRight className="size-3 transition-transform group-hover:translate-x-1" />
+          </a>
+        </div>
+      </Reveal>
+
+      {/* Preview */}
+      <motion.div
+        initial={{ opacity: 0, x: 40 }}
+        animate={isInView ? { opacity: 1, x: 0 } : {}}
+        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+        className="order-1 lg:order-2"
+      >
+        <div className="relative aspect-[4/5] overflow-hidden bg-surface">
+          <iframe
+            src={project.url}
+            title={project.title}
+            className="absolute inset-0 h-full w-full border-0"
+            loading="lazy"
+            sandbox="allow-scripts allow-same-origin"
+          />
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+function Project03({ project }: { project: (typeof PROJECTS)[2] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <div ref={ref} className="relative">
+      <Reveal>
+        <div className="mb-8 flex items-end justify-between">
+          <div>
+            <span className="text-[10px] tracking-[0.3em] uppercase text-accent">
+              {project.num} / {project.category}
+            </span>
+            <h3 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              {project.title}
+            </h3>
+          </div>
+          <a
+            href={project.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group hidden items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-muted-foreground transition-colors hover:text-foreground sm:flex"
+          >
+            Visit
+            <ExternalLink className="size-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </a>
+        </div>
+      </Reveal>
+
+      {/* Browser frame composition */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+        className="relative"
+      >
+        {/* Browser chrome */}
+        <div className="flex items-center gap-2 border border-border/60 bg-surface px-4 py-3">
+          <div className="flex gap-1.5">
+            <div className="size-2 rounded-full bg-border" />
+            <div className="size-2 rounded-full bg-border" />
+            <div className="size-2 rounded-full bg-border" />
+          </div>
+          <div className="ml-4 flex-1 rounded bg-background/40 px-3 py-1 text-[10px] text-muted-foreground/50">
+            {project.url.replace("https://", "")}
+          </div>
+        </div>
+        <div className="relative aspect-[16/10] overflow-hidden border border-t-0 border-border/60 bg-surface">
+          <iframe
+            src={project.url}
+            title={project.title}
+            className="absolute inset-0 h-full w-full border-0"
+            loading="lazy"
+            sandbox="allow-scripts allow-same-origin"
+          />
+        </div>
+      </motion.div>
+
+      <Reveal delay={0.1}>
+        <p className="mt-6 max-w-lg text-sm leading-relaxed text-muted-foreground">
+          {project.description}
+        </p>
+      </Reveal>
+    </div>
+  );
+}
+
+function Project04({ project }: { project: (typeof PROJECTS)[3] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <div ref={ref} className="relative overflow-hidden">
+      <div className="grid items-center gap-8 lg:grid-cols-2">
+        {/* Motion-focused typography */}
+        <Reveal>
+          <div>
+            <span className="text-[10px] tracking-[0.3em] uppercase text-accent">
+              {project.num} / {project.category}
+            </span>
+            <h3 className="mt-4 text-5xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+              Motion
+              <br />&amp; Video
+            </h3>
+            <p className="mt-6 max-w-md text-sm leading-relaxed text-muted-foreground">
+              {project.description}
+            </p>
+            <a
+              href={project.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group mt-8 inline-flex items-center gap-2 text-[10px] tracking-[0.25em] uppercase text-foreground transition-colors hover:text-accent"
+            >
+              View Reels
+              <ArrowRight className="size-3 transition-transform group-hover:translate-x-1" />
+            </a>
+          </div>
+        </Reveal>
+
+        {/* Animated preview strip */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={isInView ? { opacity: 1, scale: 1 } : {}}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+          className="relative"
+        >
+          <div className="relative aspect-[4/5] overflow-hidden bg-surface">
+            <iframe
+              src="https://www.instagram.com/aditya_motion_graphics/reels/"
+              title={project.title}
+              className="absolute inset-0 h-[120%] w-full border-0"
+              loading="lazy"
+              sandbox="allow-scripts allow-same-origin"
+              style={{ transform: "translateY(-8%)" }}
+            />
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
 
 function WorkSection() {
   return (
-    <section id="work" className="relative py-32 section-padding">
-      <div className="mx-auto max-w-7xl">
+    <section id="work" className="py-24 section-padding">
+      <div className="mx-auto max-w-[1400px]">
         <Reveal>
-          <div className="mb-20 max-w-2xl">
-            <p className="mb-4 text-[11px] font-medium tracking-[0.3em] uppercase text-accent">
+          <div className="mb-20">
+            <span className="text-[10px] tracking-[0.3em] uppercase text-accent">
               Selected Work
-            </p>
-            <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-              Projects that speak{" "}
-              <span className="text-gradient-glow">for themselves</span>
+            </span>
+            <h2 className="mt-4 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+              The Archive
             </h2>
-            <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-              A curated selection of brand identities, web experiences, and
-              creative campaigns — each crafted with diligence and creative
-              ambition.
-            </p>
           </div>
         </Reveal>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {PROJECTS.map((project, i) => (
-            <Reveal key={project.id} delay={i * 0.08}>
-              <div className="group relative overflow-hidden rounded-2xl border border-border/40 bg-card/50 p-8 transition-all duration-500 hover:border-accent/30 hover:shadow-[0_0_40px_rgba(77,168,218,0.06)]">
-                {/* Gradient accent */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${project.color} opacity-0 transition-opacity duration-500 group-hover:opacity-100`}
-                />
-
-                <div className="relative">
-                  <div className="mb-6 flex items-start justify-between">
-                    <span className="rounded-full border border-border/50 px-3 py-1 text-[10px] font-medium tracking-[0.15em] uppercase text-muted-foreground">
-                      {project.category}
-                    </span>
-                    <ArrowUpRight className="size-4 text-muted-foreground transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent" />
-                  </div>
-
-                  <h3 className="mb-3 text-xl font-semibold text-foreground">
-                    {project.title}
-                  </h3>
-
-                  <p className="mb-6 text-sm leading-relaxed text-muted-foreground">
-                    {project.description}
-                  </p>
-
-                  <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-md bg-muted/50 px-2.5 py-1 text-[10px] font-medium tracking-wider uppercase text-muted-foreground/80"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-          ))}
+        <div className="space-y-32">
+          <Project01 project={PROJECTS[0]} />
+          <div className="h-px w-full bg-border/40" />
+          <Project02 project={PROJECTS[1]} />
+          <div className="h-px w-full bg-border/40" />
+          <Project03 project={PROJECTS[2]} />
+          <div className="h-px w-full bg-border/40" />
+          <Project04 project={PROJECTS[3]} />
         </div>
-
-        {/* View All link */}
-        <Reveal>
-          <div className="mt-16 text-center">
-            <a
-              href="#"
-              className="group inline-flex items-center gap-2 text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground transition-colors hover:text-foreground"
-            >
-              View Full Catalog
-              <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-            </a>
-          </div>
-        </Reveal>
       </div>
     </section>
   );
 }
 
-// ─── Stats Divider ───────────────────────────────────────────────────────────
-
-function StatsBar() {
-  return (
-    <section className="relative py-20 section-padding">
-      <div className="mx-auto max-w-7xl">
-        <Reveal>
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-            {STATS.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <p className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-                  {stat.value}
-                </p>
-                <p className="mt-2 text-[11px] tracking-[0.2em] uppercase text-muted-foreground">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-          </div>
-        </Reveal>
-        <div className="mt-16 h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
-      </div>
-    </section>
-  );
-}
-
-// ─── Services Section ────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════════════════
+   SERVICES — vertical numbered list
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 function ServicesSection() {
   return (
-    <section id="services" className="relative py-32 section-padding">
-      <div className="mx-auto max-w-7xl">
+    <section id="services" className="py-28 section-padding">
+      <div className="mx-auto max-w-[1400px]">
         <Reveal>
-          <div className="mb-20 max-w-2xl">
-            <p className="mb-4 text-[11px] font-medium tracking-[0.3em] uppercase text-accent">
+          <div className="mb-20">
+            <span className="text-[10px] tracking-[0.3em] uppercase text-accent">
               What I Do
-            </p>
-            <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-              Crafted services for{" "}
-              <span className="text-gradient-glow">modern brands</span>
+            </span>
+            <h2 className="mt-4 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+              Services
             </h2>
-            <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-              I partner with businesses and creators to bring their visions to
-              life through design, code, and creative strategy.
-            </p>
           </div>
         </Reveal>
 
-        <div className="grid gap-6 sm:grid-cols-2">
+        <div>
           {SERVICES.map((service, i) => (
-            <Reveal key={service.title} delay={i * 0.1}>
-              <div className="group rounded-2xl border border-border/40 bg-card/30 p-8 transition-all duration-500 hover:border-accent/30 hover:bg-card/60">
-                <div className="mb-6 flex size-12 items-center justify-center rounded-xl bg-accent/10 transition-colors duration-300 group-hover:bg-accent/20">
-                  <service.icon className="size-5 text-accent" />
+            <Reveal key={service.num} delay={i * 0.06}>
+              <div className="group border-t border-border/40 py-8 transition-colors hover:border-accent/40">
+                <div className="flex items-start gap-6 sm:items-center">
+                  {/* Number — expands on hover */}
+                  <span className="shrink-0 text-3xl font-bold tracking-tight text-border transition-all duration-500 group-hover:text-accent group-hover:text-4xl sm:text-4xl sm:group-hover:text-5xl">
+                    {service.num}
+                  </span>
+
+                  {/* Title */}
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+                      {service.title}
+                    </h3>
+
+                    {/* Description — revealed on hover */}
+                    <p className="mt-0 max-h-0 overflow-hidden text-sm leading-relaxed text-muted-foreground opacity-0 transition-all duration-500 group-hover:mt-3 group-hover:max-h-40 group-hover:opacity-100">
+                      {service.description}
+                    </p>
+                  </div>
                 </div>
-                <h3 className="mb-3 text-xl font-semibold text-foreground">
-                  {service.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  {service.description}
-                </p>
               </div>
             </Reveal>
           ))}
+          <div className="border-t border-border/40" />
         </div>
       </div>
     </section>
   );
 }
 
-// ─── About Section ───────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════════════════
+   ABOUT — manifesto
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 function AboutSection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [40, -40]);
+
   return (
-    <section id="about" className="relative py-32 section-padding">
-      <div className="mx-auto max-w-7xl">
-        <div className="grid items-center gap-16 lg:grid-cols-2">
-          <Reveal>
-            <div>
-              <p className="mb-4 text-[11px] font-medium tracking-[0.3em] uppercase text-accent">
-                About Me
-              </p>
-              <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-                Designing with{" "}
-                <span className="text-gradient-glow">purpose</span>
+    <section id="about" ref={sectionRef} className="py-32 section-padding">
+      <div className="mx-auto max-w-[1400px]">
+        <div className="grid items-start gap-16 lg:grid-cols-[1.2fr_1fr]">
+          <div>
+            <Reveal>
+              <span className="text-[10px] tracking-[0.3em] uppercase text-accent">
+                About
+              </span>
+            </Reveal>
+
+            <Reveal delay={0.1}>
+              <h2 className="mt-6 text-5xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+                Human Instinct.
               </h2>
-              <div className="mt-8 space-y-5 text-base leading-relaxed text-muted-foreground">
+              <h2 className="mt-2 text-5xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+                AI-Amplified
+                <br />
+                Creativity.
+              </h2>
+            </Reveal>
+
+            <Reveal delay={0.2}>
+              <div className="mt-10 max-w-lg space-y-5 text-sm leading-relaxed text-muted-foreground">
                 <p>
-                  I'm Aditya — a Graphic Designer and AI Website Designer based
-                  in India. I create visuals for professional workplaces, blending
+                  I work with diligence and creative ambition. AI is my partner
+                  in creativity — helping me explore, experiment, and turn ideas
+                  into visuals and digital experiences.
+                </p>
+                <p>
+                  I create visuals for professional workplaces, blending
                   traditional design principles with the power of artificial
-                  intelligence.
+                  intelligence. Every project is an opportunity to push
+                  boundaries while staying true to craft.
                 </p>
                 <p>
-                  My philosophy is simple: work with diligence and creative
-                  ambition, using AI as a partner in creativity — not a
-                  replacement for it. Every project I take on is an opportunity
-                  to push boundaries while staying true to craft.
-                </p>
-                <p>
-                  When I'm not designing, you'll find me exploring the cutting
-                  edge of vibe coding — building interactive experiences that
-                  merge art and technology.
+                  When I am not designing, I am exploring the cutting edge of
+                  vibe coding — building interactive experiences that merge art
+                  and technology.
                 </p>
               </div>
+            </Reveal>
+          </div>
 
-              <div className="mt-10 flex flex-wrap gap-3">
-                {[
-                  "Figma",
-                  "Photoshop",
-                  "Illustrator",
-                  "React",
-                  "Three.js",
-                  "GSAP",
-                  "AI Tools",
-                ].map((tool) => (
-                  <span
-                    key={tool}
-                    className="rounded-full border border-border/50 bg-muted/30 px-4 py-2 text-[11px] font-medium tracking-wider uppercase text-muted-foreground"
-                  >
-                    {tool}
+          {/* Abstract identity */}
+          <motion.div
+            style={{ y: parallaxY }}
+            className="relative flex items-center justify-center"
+          >
+            <Reveal delay={0.3}>
+              <div className="relative flex aspect-square w-full max-w-sm items-center justify-center">
+                {/* Generative line portrait — abstract */}
+                <svg
+                  viewBox="0 0 300 300"
+                  fill="none"
+                  className="h-full w-full"
+                >
+                  {/* Concentric arcs */}
+                  {[120, 100, 80, 60, 40].map((r, i) => (
+                    <circle
+                      key={i}
+                      cx="150"
+                      cy="150"
+                      r={r}
+                      stroke="currentColor"
+                      strokeWidth="0.5"
+                      className="text-border/60"
+                    />
+                  ))}
+                  {/* Cross lines */}
+                  <line
+                    x1="150"
+                    y1="20"
+                    x2="150"
+                    y2="280"
+                    stroke="currentColor"
+                    strokeWidth="0.5"
+                    className="text-border/40"
+                  />
+                  <line
+                    x1="20"
+                    y1="150"
+                    x2="280"
+                    y2="150"
+                    stroke="currentColor"
+                    strokeWidth="0.5"
+                    className="text-border/40"
+                  />
+                  {/* Accent dot */}
+                  <circle
+                    cx="150"
+                    cy="150"
+                    r="4"
+                    fill="currentColor"
+                    className="text-accent"
+                  />
+                </svg>
+
+                {/* Initials */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-5xl font-bold tracking-[-0.02em] text-foreground">
+                    A
                   </span>
-                ))}
-              </div>
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.2}>
-            <div className="relative">
-              {/* Abstract decorative element */}
-              <div className="aspect-square rounded-3xl border border-border/30 bg-gradient-to-br from-accent/5 via-transparent to-accent/10 p-12">
-                <div className="flex h-full flex-col items-center justify-center gap-8">
-                  {/* Decorative rings */}
-                  <div className="relative">
-                    <div className="size-32 rounded-full border border-accent/20" />
-                    <div className="absolute inset-4 rounded-full border border-accent/30" />
-                    <div className="absolute inset-8 rounded-full border border-accent/40" />
-                    <div className="absolute inset-12 rounded-full bg-accent/10" />
-                  </div>
-
-                  <div className="text-center">
-                    <p className="text-sm font-medium tracking-[0.2em] uppercase text-foreground">
-                      Creative
-                    </p>
-                    <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground">
-                      &amp; Technical
-                    </p>
-                  </div>
+                  <span className="text-[9px] tracking-[0.4em] uppercase text-muted-foreground">
+                    Aditya
+                  </span>
                 </div>
               </div>
-
-              {/* Floating accent dot */}
-              <div className="absolute -right-3 -top-3 size-6 rounded-full bg-accent/20" />
-              <div className="absolute -bottom-4 -left-4 size-4 rounded-full bg-accent/15" />
-            </div>
-          </Reveal>
+            </Reveal>
+          </motion.div>
         </div>
       </div>
     </section>
   );
 }
 
-// ─── Contact Section ─────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════════════════
+   CREATIVE TOOLKIT — typography composition
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+function ToolkitSection() {
+  return (
+    <section className="py-24 overflow-hidden section-padding">
+      <div className="mx-auto max-w-[1400px]">
+        <Reveal>
+          <span className="text-[10px] tracking-[0.3em] uppercase text-accent">
+            Creative Toolkit
+          </span>
+        </Reveal>
+      </div>
+
+      {/* Scrolling typography composition */}
+      <div className="mt-12 space-y-0">
+        {TOOLS.map((tool, i) => (
+          <motion.div
+            key={tool}
+            initial={{ opacity: 0, x: i % 2 === 0 ? -60 : 60 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{
+              duration: 0.8,
+              ease: [0.22, 1, 0.36, 1],
+              delay: i * 0.04,
+            }}
+            className="border-t border-border/30 py-3"
+          >
+            <span
+              className={`block text-[clamp(2rem,6vw,5rem)] font-bold leading-none tracking-[-0.03em] ${
+                i % 3 === 0
+                  ? "text-foreground"
+                  : "text-foreground/25"
+              }`}
+            >
+              {tool}
+            </span>
+          </motion.div>
+        ))}
+        <div className="border-t border-border/30" />
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PROCESS — four chapters
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+function ProcessSection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const lineProgress = useTransform(scrollYProgress, [0.1, 0.85], [0, 1]);
+
+  return (
+    <section id="process" ref={sectionRef} className="py-32 section-padding">
+      <div className="mx-auto max-w-[1400px]">
+        <Reveal>
+          <div className="mb-20">
+            <span className="text-[10px] tracking-[0.3em] uppercase text-accent">
+              Process
+            </span>
+            <h2 className="mt-4 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+              How I Work
+            </h2>
+          </div>
+        </Reveal>
+
+        <div className="relative">
+          {/* Vertical progress line */}
+          <div className="absolute left-6 top-0 bottom-0 w-px bg-border/30 lg:left-10">
+            <motion.div
+              style={{ scaleY: lineProgress }}
+              className="w-full origin-top bg-accent/60"
+            />
+          </div>
+
+          <div className="space-y-24">
+            {PROCESS_STEPS.map((step, i) => (
+              <Reveal key={step.num} delay={i * 0.08}>
+                <div className="relative pl-16 lg:pl-24">
+                  {/* Chapter dot */}
+                  <div className="absolute left-4 top-1.5 flex size-5 items-center justify-center lg:left-8">
+                    <div className="size-2 rounded-full bg-accent" />
+                  </div>
+
+                  <span className="text-[10px] tracking-[0.3em] uppercase text-accent">
+                    Chapter {step.num}
+                  </span>
+                  <h3 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                    {step.title}
+                  </h3>
+                  <p className="mt-4 max-w-lg text-sm leading-relaxed text-muted-foreground">
+                    {step.text}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONTACT — full-screen bold ending
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 function ContactSection() {
   return (
-    <section id="contact" className="relative py-32 section-padding">
-      <div className="mx-auto max-w-7xl">
+    <section
+      id="contact"
+      className="relative flex min-h-[90svh] flex-col justify-center py-24 section-padding"
+    >
+      <div className="mx-auto w-full max-w-[1400px]">
         <Reveal>
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="mb-4 text-[11px] font-medium tracking-[0.3em] uppercase text-accent">
-              Get in Touch
-            </p>
-            <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-              Let's create something{" "}
-              <span className="text-gradient-glow">remarkable</span>
-            </h2>
-            <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-              Have a project in mind or want to explore a collaboration? I'd love
-              to hear from you.
-            </p>
-          </div>
+          <h2 className="text-5xl font-bold tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl">
+            Your Next Idea
+            <br />
+            Deserves Better
+            <br />
+            Visuals.
+          </h2>
         </Reveal>
 
-        <Reveal delay={0.2}>
-          <div className="mx-auto mt-16 grid max-w-3xl gap-8 sm:grid-cols-2">
-            {/* Email card */}
-            <a
-              href="mailto:hello@aditya.design"
-              className="group flex items-start gap-4 rounded-2xl border border-border/40 bg-card/30 p-6 transition-all duration-500 hover:border-accent/30 hover:bg-card/60"
-            >
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent/10">
-                <Mail className="size-4 text-accent" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-foreground">Email</p>
-                <p className="mt-1 text-sm text-muted-foreground transition-colors group-hover:text-foreground">
-                  hello@aditya.design
-                </p>
-              </div>
-            </a>
-
-            {/* Location card */}
-            <div className="flex items-start gap-4 rounded-2xl border border-border/40 bg-card/30 p-6">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent/10">
-                <MapPin className="size-4 text-accent" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-foreground">Location</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  India · Available Worldwide
-                </p>
+        <Reveal delay={0.15}>
+          <div className="mt-12 flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <span className="text-[10px] tracking-[0.3em] uppercase text-accent">
+                Let's Create Something
+              </span>
+              <div className="mt-6">
+                <a
+                  href="mailto:aditya.singh267742@gmail.com"
+                  className="text-xl font-medium tracking-tight text-foreground underline underline-offset-4 transition-colors hover:text-accent sm:text-2xl"
+                >
+                  aditya.singh267742@gmail.com
+                </a>
               </div>
             </div>
-          </div>
-        </Reveal>
 
-        {/* Social links */}
-        <Reveal delay={0.3}>
-          <div className="mt-12 flex justify-center gap-4">
-            {[
-              { name: "Dribbble", href: "#" },
-              { name: "Behance", href: "#" },
-              { name: "LinkedIn", href: "#" },
-              { name: "GitHub", href: "#" },
-            ].map((social) => (
+            <div className="flex gap-6">
               <a
-                key={social.name}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-1 rounded-full border border-border/40 px-4 py-2 text-[11px] font-medium tracking-[0.15em] uppercase text-muted-foreground transition-all duration-300 hover:border-accent/30 hover:text-foreground"
+                href="mailto:aditya.singh267742@gmail.com"
+                className="flex items-center gap-2 text-[10px] tracking-[0.25em] uppercase text-foreground transition-colors hover:text-accent"
               >
-                {social.name}
-                <ExternalLink className="size-3 opacity-0 transition-opacity group-hover:opacity-100" />
+                <Mail className="size-3.5" />
+                Send Email
               </a>
-            ))}
+              <a
+                href="#"
+                className="flex items-center gap-2 text-[10px] tracking-[0.25em] uppercase text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Download Resume
+                <ArrowRight className="size-3" />
+              </a>
+            </div>
           </div>
         </Reveal>
       </div>
@@ -597,40 +893,39 @@ function ContactSection() {
   );
 }
 
-// ─── Footer ──────────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 function Footer() {
   return (
-    <footer className="relative py-12 section-padding border-t border-border/30">
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 sm:flex-row">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-bold tracking-[0.2em] uppercase text-foreground">
-            ADITYA
-          </span>
-          <span className="text-[10px] tracking-[0.3em] text-muted-foreground">
-            PORTFOLIO
-          </span>
-        </div>
-        <p className="text-xs text-muted-foreground/60">
-          © {new Date().getFullYear()} Aditya. All rights reserved. Built with
-          creative ambition.
-        </p>
+    <footer className="border-t border-border/30 py-10 section-padding">
+      <div className="mx-auto flex max-w-[1400px] flex-col items-center justify-between gap-4 sm:flex-row">
+        <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/50">
+          © {new Date().getFullYear()} Aditya. All rights reserved.
+        </span>
+        <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/50">
+          Built with creative ambition
+        </span>
       </div>
     </footer>
   );
 }
 
-// ─── Page ────────────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════════════════
+   PAGE
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function Landing() {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <HeroSection />
+      <OpeningSection />
       <WorkSection />
-      <StatsBar />
       <ServicesSection />
       <AboutSection />
+      <ToolkitSection />
+      <ProcessSection />
       <ContactSection />
       <Footer />
     </div>
