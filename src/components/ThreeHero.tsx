@@ -5,18 +5,23 @@ import * as THREE from "three";
 import { Bot } from "@/components/Bot";
 
 /**
- * Detects reduced-motion preference so we can skip heavy 3D on devices
- * where the user prefers minimal animation.
+ * Detects reduced-motion preference. Reads the initial value synchronously
+ * so there is no extra render from a setState inside an effect body.
  */
 function useReducedMotion() {
-  const [reduced, setReduced] = useState(false);
+  const [reduced, setReduced] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(mq.matches);
     const handler = (e: MediaQueryListEvent) => setReduced(e.matches);
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
   }, []);
+
   return reduced;
 }
 
@@ -125,7 +130,7 @@ function Scene({ mouseRef }: { mouseRef: React.MutableRefObject<THREE.Vector2> }
       <MouseBridge mouseRef={mouseRef} />
 
       <Float speed={1.5} rotationIntensity={0.15} floatIntensity={0.3}>
-        <Bot mouse={botMouse.current} />
+        <Bot mouseRef={botMouse} />
       </Float>
 
       <Environment preset="night" environmentIntensity={0.4} />

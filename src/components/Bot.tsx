@@ -7,7 +7,7 @@ import * as THREE from "three";
  * need any external 3D model files. The bot sits at the origin, floating and
  * rotating gently, with subtle idle animation.
  */
-export function Bot({ mouse }: { mouse: THREE.Vector2 }) {
+export function Bot({ mouseRef }: { mouseRef: React.RefObject<THREE.Vector2> }) {
   const groupRef = useRef<THREE.Group>(null);
   const headRef = useRef<THREE.Mesh>(null);
   const ringRef = useRef<THREE.Mesh>(null);
@@ -38,17 +38,6 @@ export function Bot({ mouse }: { mouse: THREE.Vector2 }) {
     [],
   );
 
-  const glowMat = useMemo(
-    () =>
-      new THREE.MeshStandardMaterial({
-        color: new THREE.Color("#4da8da"),
-        emissive: new THREE.Color("#4da8da"),
-        emissiveIntensity: 2.5,
-        toneMapped: false,
-      }),
-    [],
-  );
-
   const eyeGlowMat = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
@@ -60,14 +49,23 @@ export function Bot({ mouse }: { mouse: THREE.Vector2 }) {
     [],
   );
 
-  // Floating particles around the bot
+  // Floating particles — deterministic seeded PRNG, computed once in useMemo
   const particlePositions = useMemo(() => {
+    // Simple seeded PRNG (mulberry32) — deterministic across renders
+    let seed = 42;
+    const rand = () => {
+      seed = (seed + 0x6d2b79f5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+
     const count = 40;
     const positions = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      const r = 1.8 + Math.random() * 1.2;
+      const theta = rand() * Math.PI * 2;
+      const phi = Math.acos(2 * rand() - 1);
+      const r = 1.8 + rand() * 1.2;
       positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
       positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
       positions[i * 3 + 2] = r * Math.cos(phi);
@@ -92,8 +90,8 @@ export function Bot({ mouse }: { mouse: THREE.Vector2 }) {
       groupRef.current.position.y = Math.sin(t * 0.6) * 0.08;
 
       // Mouse-follow rotation (subtle)
-      const targetRotY = mouse.x * 0.3;
-      const targetRotX = -mouse.y * 0.15 + 0.05;
+      const targetRotY = mouseRef.current.x * 0.3;
+      const targetRotX = -mouseRef.current.y * 0.15 + 0.05;
       groupRef.current.rotation.y = THREE.MathUtils.lerp(
         groupRef.current.rotation.y,
         targetRotY,
