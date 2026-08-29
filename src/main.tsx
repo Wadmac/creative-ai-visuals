@@ -1,10 +1,11 @@
-import '@vly-ai/integrations';
 import { Toaster } from "@/components/ui/sonner";
 import { VlyToolbar } from "../vly-toolbar-readonly.tsx";
 import React, { StrictMode, useEffect, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router";
+import { InstrumentationProvider } from "@/instrumentation";
 import "./index.css";
+import "@vly-ai/integrations";
 
 // Lazy load route components for better code splitting
 const Landing = lazy(() => import("./pages/Landing.tsx"));
@@ -101,21 +102,23 @@ function RouteSyncer() {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RootErrorBoundary>
-      <ToolbarErrorBoundary>
-        <VlyToolbar />
-      </ToolbarErrorBoundary>
-      <BrowserRouter>
-        <RouteSyncer />
-        <Suspense fallback={<RouteLoading />}>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-        <Toaster />
-      </BrowserRouter>
-    </RootErrorBoundary>
+    <InstrumentationProvider>
+      <RootErrorBoundary>
+        <ToolbarErrorBoundary>
+          <VlyToolbar />
+        </ToolbarErrorBoundary>
+        <BrowserRouter>
+          <RouteSyncer />
+          <Suspense fallback={<RouteLoading />}>
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+          <Toaster />
+        </BrowserRouter>
+      </RootErrorBoundary>
+    </InstrumentationProvider>
   </StrictMode>,
 );
