@@ -74,7 +74,7 @@ const CATEGORIES = ["All", "Brand Design", "UI/UX Design", "Web Design", "Event 
 type View = "catalog" | "dashboard";
 
 export default function Dashboard() {
-  const { user, signOut } = useAuth();
+  const { signOut } = useAuth();
   const navigate = useNavigate();
   const [view, setView] = useState<View>("catalog");
   const [search, setSearch] = useState("");
@@ -144,9 +144,9 @@ export default function Dashboard() {
 
           <div className="flex items-center gap-4">
             <div className="hidden text-right sm:block">
-              <p className="text-xs text-muted-foreground">Signed in as</p>
+              <p className="text-xs text-muted-foreground">Welcome</p>
               <p className="text-sm font-medium text-foreground">
-                {user?.name || user?.email || "Guest"}
+                Guest
               </p>
             </div>
             <Button
@@ -276,8 +276,7 @@ export default function Dashboard() {
                 Your Dashboard
               </h1>
               <p className="mb-10 text-sm text-muted-foreground">
-                Welcome back{user?.name ? `, ${user.name}` : ""}. Here's an
-                overview of your workspace.
+                Welcome back. Here's an overview of your workspace.
               </p>
 
               {/* Stats */}
