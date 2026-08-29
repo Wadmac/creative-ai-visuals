@@ -2,7 +2,9 @@ import { useRef } from "react";
 import {
   motion,
   useInView,
+  useMotionValue,
   useScroll,
+  useSpring,
   useTransform,
   type Variants,
 } from "framer-motion";
@@ -600,36 +602,108 @@ function ServicesSection() {
 
 function AboutSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const portraitRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
   });
-  const parallaxY = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [60, -60]);
+
+  // Mouse parallax for the portrait
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springX = useSpring(mouseX, { stiffness: 60, damping: 20 });
+  const springY = useSpring(mouseY, { stiffness: 60, damping: 20 });
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!portraitRef.current) return;
+    const rect = portraitRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    mouseX.set(x * 12);
+    mouseY.set(y * 12);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(0);
+    mouseY.set(0);
+  };
 
   return (
     <section id="about" ref={sectionRef} className="py-32 section-padding">
       <div className="mx-auto max-w-[1400px]">
-        <div className="grid items-start gap-16 lg:grid-cols-[1.2fr_1fr]">
-          <div>
-            <Reveal>
-              <span className="text-[10px] tracking-[0.3em] uppercase text-accent">
-                About
-              </span>
-            </Reveal>
+        {/* Label */}
+        <Reveal>
+          <span className="text-[10px] tracking-[0.3em] uppercase text-accent">
+            The Human Behind the Work
+          </span>
+        </Reveal>
 
-            <Reveal delay={0.1}>
-              <h2 className="mt-6 text-5xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+        <div className="mt-16 grid items-start gap-12 lg:grid-cols-[1fr_1fr] lg:gap-8">
+          {/* Left: portrait with oversized typography */}
+          <motion.div
+            style={{ y: parallaxY }}
+            className="relative"
+          >
+            <div
+              ref={portraitRef}
+              className="relative overflow-hidden"
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+            >
+              {/* Oversized background typography */}
+              <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center overflow-hidden">
+                <span className="text-[clamp(5rem,20vw,14rem)] font-bold leading-none tracking-[-0.05em] text-foreground/[0.04]">
+                  ADITYA
+                </span>
+              </div>
+
+              {/* Portrait image with mouse parallax */}
+              <motion.div
+                style={{ x: springX, y: springY }}
+                className="relative z-20"
+              >
+                <div className="relative aspect-[3/4] w-full overflow-hidden bg-surface">
+                  <img
+                    src="/portrait.jpg"
+                    alt="Aditya — Graphic Designer and AI Website Creator"
+                    className="h-full w-full object-cover object-center"
+                    loading="lazy"
+                  />
+                  {/* Subtle vignette overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-background/30 via-transparent to-transparent" />
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Small editorial caption under the image */}
+            <div className="mt-4 flex items-center justify-between">
+              <span className="text-[9px] tracking-[0.3em] uppercase text-muted-foreground/50">
+                Portrait / 2025
+              </span>
+              <div className="h-px flex-1 mx-6 bg-border/30" />
+              <span className="text-[9px] tracking-[0.3em] uppercase text-muted-foreground/50">
+                New Delhi, India
+              </span>
+            </div>
+          </motion.div>
+
+          {/* Right: manifesto + about content */}
+          <div className="flex flex-col justify-center lg:pt-16">
+            <Reveal>
+              <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
                 Human Instinct.
               </h2>
-              <h2 className="mt-2 text-5xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+              <h2 className="mt-2 text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
                 AI-Amplified
                 <br />
                 Creativity.
               </h2>
             </Reveal>
 
-            <Reveal delay={0.2}>
-              <div className="mt-10 max-w-lg space-y-5 text-sm leading-relaxed text-muted-foreground">
+            <Reveal delay={0.1}>
+              <div className="mt-10 max-w-md space-y-5 text-sm leading-relaxed text-muted-foreground">
                 <p>
                   I work with diligence and creative ambition. AI is my partner
                   in creativity — helping me explore, experiment, and turn ideas
@@ -648,74 +722,29 @@ function AboutSection() {
                 </p>
               </div>
             </Reveal>
-          </div>
 
-          {/* Abstract identity */}
-          <motion.div
-            style={{ y: parallaxY }}
-            className="relative flex items-center justify-center"
-          >
-            <Reveal delay={0.3}>
-              <div className="relative flex aspect-square w-full max-w-sm items-center justify-center">
-                {/* Generative line portrait — abstract */}
-                <svg
-                  viewBox="0 0 300 300"
-                  fill="none"
-                  className="h-full w-full"
-                >
-                  {/* Concentric arcs */}
-                  {[120, 100, 80, 60, 40].map((r, i) => (
-                    <circle
-                      key={i}
-                      cx="150"
-                      cy="150"
-                      r={r}
-                      stroke="currentColor"
-                      strokeWidth="0.5"
-                      className="text-border/60"
-                    />
-                  ))}
-                  {/* Cross lines */}
-                  <line
-                    x1="150"
-                    y1="20"
-                    x2="150"
-                    y2="280"
-                    stroke="currentColor"
-                    strokeWidth="0.5"
-                    className="text-border/40"
-                  />
-                  <line
-                    x1="20"
-                    y1="150"
-                    x2="280"
-                    y2="150"
-                    stroke="currentColor"
-                    strokeWidth="0.5"
-                    className="text-border/40"
-                  />
-                  {/* Accent dot */}
-                  <circle
-                    cx="150"
-                    cy="150"
-                    r="4"
-                    fill="currentColor"
-                    className="text-accent"
-                  />
-                </svg>
-
-                {/* Initials */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-5xl font-bold tracking-[-0.02em] text-foreground">
-                    A
+            {/* Tool tags */}
+            <Reveal delay={0.15}>
+              <div className="mt-8 flex flex-wrap gap-2">
+                {[
+                  "Photoshop",
+                  "Illustrator",
+                  "CorelDraw",
+                  "Filmora",
+                  "CapCut",
+                  "AI Tools",
+                  "Vibe Coding",
+                ].map((tool) => (
+                  <span
+                    key={tool}
+                    className="border border-border/40 px-3 py-1.5 text-[10px] font-medium tracking-wider uppercase text-muted-foreground/70"
+                  >
+                    {tool}
                   </span>
-                  <span className="text-[9px] tracking-[0.4em] uppercase text-muted-foreground">
-                    Aditya
-                  </span>
-                </div>
+                ))}
               </div>
             </Reveal>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
